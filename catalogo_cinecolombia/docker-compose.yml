@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: catalogo_cineColombia
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: alejandro
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    networks:
+      - cinecolombia-network
+    volumes:
+      - db-data:/var/lib/mysql
+
+  cinecolombia_app:
+    image: jaimerodriguez1234/cinecolombia_app:latest # Apunta a tu imagen en Docker Hub
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/catalogo_cineColombia
+      SPRING_DATASOURCE_USERNAME: alejandro
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      - db
+    networks:
+      - cinecolombia-network
+
+networks:
+  cinecolombia-network:
+
+volumes:
+  db-data:
